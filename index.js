@@ -1,10 +1,13 @@
+const https = require('https');
+const fs = require('fs');
+
 // Load up the discord.js library
-const Discord = require("discord.js");
+const { Client, MessageAttachment, MessageEmbed } = require("discord.js");
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
-const client = new Discord.Client();
+const client = new Client();
 
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
@@ -132,6 +135,68 @@ client.on("message", async message => {
     message.channel.bulkDelete(fetched)
       .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
   }
+
+  // NASA Astronomy Picture Of the Day
+  if(command==="apod") {
+	  
+    let url = `https://api.nasa.gov/planetary/apod?api_key=${config.nasa_apikey}&thumbs=true&hd=true`;
+
+    https.get(url, (res) => {
+      const { statusCode } = res;
+      const contentType = res.headers['content-type'];
+  
+      let error;
+      if (statusCode !== 200) {
+        error = new Error('Request Failed.\n' +
+                          `Status Code: ${statusCode}`);
+      } else if (!/^application\/json/.test(contentType)) {
+        error = new Error('Invalid content-type.\n' +
+                          `Expected application/json but received ${contentType}`);
+      }
+      if (error) {
+        console.error(error.message);
+        // Consume response data to free up memory
+        res.resume();
+        return;
+      }
+    
+      res.setEncoding('utf8');
+      let rawData = '';
+      res.on('data', (chunk) => { rawData += chunk; });
+      res.on('end', () => {
+        try {
+          const parsedData = JSON.parse(rawData);
+    	  let embed = new MessageEmbed()
+			.setTitle(parsedData.title)
+			.setColor(0xf4f4ff)
+		        .setDescription(`${parsedData.explanation}`)
+		        .setTimestamp(new Date())
+		        .setURL(parsedData.url)
+		        .setAuthor(`NASA Astronomy Picture Of the Day`)
+		        .setFooter(`Media type: ${parsedData.media_type}`)
+		        .setThumbnail(parsedData.thumbnail_url)
+		        .addField("APOD date", parsedData.date)
+
+   	  if(parsedData.media_type !== "video") {
+		if(parsedData.hasAttribute("hdurl") {
+			embed.setImage(parsedData.hdurl)
+			     .setURL(parsedData.hdurl)
+		} else{
+			embed.setImage(parsedData.url)
+		}
+	  }
+		        
+	  message.channel.send(embed);
+        } catch (e) {
+          console.error(e.message);
+        }
+      });
+    }).on('error', (e) => {
+      console.error(`Got error: ${e.message}`);
+    });
+  }
+
+
 });
 
 client.login(config.token);
