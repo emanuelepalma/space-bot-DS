@@ -17,10 +17,16 @@
     "stars",
     "satellites"
   ],
-  "author": [ "Emanuele Palma", "Francesco Tabaro"],
+  "author": [
+    "Emanuele Palma",
+    "Francesco Tabaro"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Palm654/space-bot-DS/issues"
   },
-  "homepage": "https://github.com/Palm654/space-bot-DS#readme"
+  "homepage": "https://github.com/Palm654/space-bot-DS#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
 }
