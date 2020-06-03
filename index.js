@@ -45,7 +45,6 @@ client.on("message", async message => {
   // Also good practice to ignore any message that does not start with our prefix, 
   // which is set in the configuration file.
   if(message.content.indexOf(config.prefix) !== 0) return;
-  
   // Here we separate our "command" name, and our "arguments" for the command. 
   // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
   // command = say
@@ -71,80 +70,136 @@ client.on("message", async message => {
     // And we get the bot to say the thing: 
     message.channel.send(sayMessage);
   }
-  
-  if(command === "kick") {
-    // This command must be limited to mods and admins. In this example we just hardcode the role names.
-    // Please read on Array.some() to understand this bit: 
-    // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/some?
-    if(!message.member.roles.some(r=>["Administrator", "Moderator"].includes(r.name)) )
-      return message.reply("Sorry, you don't have permissions to use this!");
-    
-    // Let's first check if we have a member and if we can kick them!
-    // message.mentions.members is a collection of people that have been mentioned, as GuildMembers.
-    // We can also support getting the member by ID, which would be args[0]
-    let member = message.mentions.members.first() || message.guild.members.get(args[0]);
-    if(!member)
-      return message.reply("Please mention a valid member of this server");
-    if(!member.kickable) 
-      return message.reply("I cannot kick this user! Do they have a higher role? Do I have kick permissions?");
-    
-    // slice(1) removes the first part, which here should be the user mention or ID
-    // join(' ') takes all the various parts to make it a single string.
-    let reason = args.slice(1).join(' ');
-    if(!reason) reason = "No reason provided";
-    
-    // Now, time for a swift kick in the nuts!
-    await member.kick(reason)
-      .catch(error => message.reply(`Sorry ${message.author} I couldn't kick because of : ${error}`));
-    message.reply(`${member.user.tag} has been kicked by ${message.author.tag} because: ${reason}`);
 
-  }
-  
-  if(command === "ban") {
-    // Most of this command is identical to kick, except that here we'll only let admins do it.
-    // In the real world mods could ban too, but this is just an example, right? ;)
-    if(!message.member.roles.some(r=>["Administrator"].includes(r.name)) )
-      return message.reply("Sorry, you don't have permissions to use this!");
-    
-    let member = message.mentions.members.first();
-    if(!member)
-      return message.reply("Please mention a valid member of this server");
-    if(!member.bannable) 
-      return message.reply("I cannot ban this user! Do they have a higher role? Do I have ban permissions?");
-
-    let reason = args.slice(1).join(' ');
-    if(!reason) reason = "No reason provided";
-    
-    await member.ban(reason)
-      .catch(error => message.reply(`Sorry ${message.author} I couldn't ban because of : ${error}`));
-    message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
-  }
-  
-  if(command === "purge") {
-    // This command removes all messages from all users in the channel, up to 100.
-    
-    // get the delete count, as an actual number.
-    const deleteCount = parseInt(args[0], 10);
-    
-    // Ooooh nice, combined conditions. <3
-    if(!deleteCount || deleteCount < 2 || deleteCount > 100)
-      return message.reply("Please provide a number between 2 and 100 for the number of messages to delete");
-    
-    // So we get our messages, and delete them. Simple enough, right?
-    const fetched = await message.channel.fetchMessages({limit: deleteCount});
-    message.channel.bulkDelete(fetched)
-      .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
-  }
 
   // NASA Astronomy Picture Of the Day
-  if(command==="apod") {
-	  
-    let url = `https://api.nasa.gov/planetary/apod?api_key=${config.nasa_apikey}&thumbs=true&hd=true`;
+  if (command === "apod") {
+
+    if(args.length >1){
+
+      var dateString = args.join("-");
+
+      var outDate = dateString;
+
+
+    }else{
+
+
+    var dateString = args[0];
+
+
+    if (dateString === undefined) {
+
+      var sl0 = Date.now();
+      var date_ob = new Date(sl0);
+      // year as 4 digits (YYYY)
+      var year = date_ob.getFullYear();
+      // month as 2 digits (MM)
+      var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+      // date as 2 digits (DD)
+      var date = ("0" + date_ob.getDate()).slice(-2);
+      // date as YYYY-MM-DD format
+      var outDate = year + "-" + month + "-" + date;
+
+    } else {
+
+      switch (dateString) {
+
+        case "yesterday":
+
+          var sl0 = Date.now();
+          var date_ob = new Date(sl0);
+          // year as 4 digits (YYYY)
+          var year = date_ob.getFullYear();
+          // month as 2 digits (MM)
+          var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+          // date as 2 digits (DD)
+          var date0 = date_ob.getDate();
+          var date0 = date0 - 1;
+          var date = ("0" + date0).slice(-2);
+          // date as YYYY-MM-DD format
+          var outDate = year + "-" + month + "-" + date;
+          break;
+
+
+        case "today":
+          // initialize new Date object
+          var sl0 = Date.now();
+          var date_ob = new Date(sl0);
+          // year as 4 digits (YYYY)
+          var year = date_ob.getFullYear();
+          // month as 2 digits (MM)
+          var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+          // date as 2 digits (DD)
+          var date = ("0" + date_ob.getDate()).slice(-2);
+          // date as YYYY-MM-DD format
+          var outDate = year + "-" + month + "-" + date;
+          break;
+
+        case "onemonthago":
+          // initialize new Date object
+          var sl0 = Date.now();
+          var date_ob = new Date(sl0);
+          // year as 4 digits (YYYY)
+          var year = date_ob.getFullYear();
+          // month as 2 digits (MM)
+          var month0 = (date_ob.getMonth() + 1);
+          var month0 = month0 - 1;
+          var month = ("0" + month0).slice(-2);
+          // date as 2 digits (DD)
+          var date = ("0" + date_ob.getDate()).slice(-2);
+          // date as YYYY-MM-DD format
+          var outDate = year + "-" + month + "-" + date;
+
+          break;
+
+        case "oneyearago":
+
+          var sl0 = Date.now();
+          var date_ob = new Date(sl0);
+          // year as 4 digits (YYYY)
+          var year = date_ob.getFullYear();
+          var year = year - 1;
+          // month as 2 digits (MM)
+          var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+          // date as 2 digits (DD)
+          var date = ("0" + date_ob.getDate()).slice(-2);
+          // date as YYYY-MM-DD format
+          var outDate = year + "-" + month + "-" + date;
+
+          break;
+
+        case "tenyearsago":
+          var sl0 = Date.now();
+          var date_ob = new Date(sl0);
+          // year as 4 digits (YYYY)
+          var year = date_ob.getFullYear();
+          var year = year - 10;
+          // month as 2 digits (MM)
+          var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+          // date as 2 digits (DD)
+          var date = ("0" + date_ob.getDate()).slice(-2);
+          // date as YYYY-MM-DD format
+          var outDate = year + "-" + month + "-" + date;
+
+          break;
+
+
+
+      }
+
+    }
+  }
+    var urlfinal = `https://api.nasa.gov/planetary/apod?api_key=${config.nasa_apikey}&thumbs=true&hd=true&date=` + outDate;
+
+
+    let url = new URL(urlfinal);
+
 
     https.get(url, (res) => {
       const { statusCode } = res;
       const contentType = res.headers['content-type'];
-  
+
       let error;
       if (statusCode !== 200) {
         error = new Error('Request Failed.\n' +
