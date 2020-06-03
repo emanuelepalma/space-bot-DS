@@ -28,6 +28,9 @@
   },
   "homepage": "https://github.com/Palm654/space-bot-DS#readme",
   "dependencies": {
-    "discord.js": "^12.2.0"
+    "date-and-time": "^0.13.1",
+    "discord.js": "^12.2.0",
+    "prompt": "^1.0.0",
+    "readline-sync": "^1.4.10"
   }
 }
