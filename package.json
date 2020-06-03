@@ -1,0 +1,26 @@
+{
+  "name": "space-bot-ds",
+  "version": "1.0.0",
+  "description": "A Discord bot to look at the stars and satellites ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Palm654/space-bot-DS.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "space",
+    "stars",
+    "satellites"
+  ],
+  "author": [ "Emanuele Palma", "Francesco Tabaro"],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Palm654/space-bot-DS/issues"
+  },
+  "homepage": "https://github.com/Palm654/space-bot-DS#readme"
+}
