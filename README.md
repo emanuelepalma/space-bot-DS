@@ -6,4 +6,4 @@ This is a simple Discord bot to monitor stars and satellite.
 
 ```
 npm install 
-``
+```
