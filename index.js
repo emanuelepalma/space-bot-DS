@@ -178,7 +178,7 @@ client.on("message", async message => {
 		        .addField("APOD date", parsedData.date)
 
    	  if(parsedData.media_type !== "video") {
-		if(parsedData.hasAttribute("hdurl") {
+		if(parsedData.hasAttribute("hdurl")) {
 			embed.setImage(parsedData.hdurl)
 			     .setURL(parsedData.hdurl)
 		} else{
