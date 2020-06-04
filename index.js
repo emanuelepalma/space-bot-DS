@@ -4,6 +4,52 @@ const fs = require('fs');
 // Load up the discord.js library
 const { Client, MessageAttachment, MessageEmbed } = require("discord.js");
 
+function rest_request(url) {
+  let prom = new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+
+      const {statusCode} = res;
+      const contentType = res.headers['content-type'];
+
+      let error;
+      if (statusCode !== 200) {
+        error = new Error('Request Failed.\n' +
+            `Status Code: ${statusCode}`);
+      } else if (!/^application\/json/.test(contentType)) {
+        error = new Error('Invalid content-type.\n' +
+            `Expected application/json but received ${contentType}`);
+      }
+      if (error) {
+        // Consume response data to free up memory
+        res.resume();
+        reject(error)
+      }
+      res.setEncoding('utf8');
+      let rawData = '';
+      res.on('data', (chunk) => {
+        rawData += chunk;
+      });
+
+      res.on('end', () => {
+        try{
+          const parsedData = JSON.parse(rawData);
+          resolve(parsedData)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    }).on('error', (e) => {
+      reject(e)
+    });
+  })
+  return(prom)
+}
+
+
+
+
+
+
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
@@ -138,63 +184,34 @@ client.on("message", async message => {
 
   // NASA Astronomy Picture Of the Day
   if(command==="apod") {
-	  
+
     let url = `https://api.nasa.gov/planetary/apod?api_key=${config.nasa_apikey}&thumbs=true&hd=true`;
+    rest_request(url).then((parsedData) => {
+      let embed = new MessageEmbed()
+          .setTitle(parsedData.title)
+          .setColor(0xf4f4ff)
+          .setDescription(`${parsedData.explanation}`)
+          .setTimestamp(new Date())
+          .setURL(parsedData.url)
+          .setAuthor(`NASA Astronomy Picture Of the Day`)
+          .setFooter(`Media type: ${parsedData.media_type}`)
+          .setThumbnail(parsedData.thumbnail_url)
+          .addField("APOD date", parsedData.date)
 
-    https.get(url, (res) => {
-      const { statusCode } = res;
-      const contentType = res.headers['content-type'];
-  
-      let error;
-      if (statusCode !== 200) {
-        error = new Error('Request Failed.\n' +
-                          `Status Code: ${statusCode}`);
-      } else if (!/^application\/json/.test(contentType)) {
-        error = new Error('Invalid content-type.\n' +
-                          `Expected application/json but received ${contentType}`);
-      }
-      if (error) {
-        console.error(error.message);
-        // Consume response data to free up memory
-        res.resume();
-        return;
-      }
-    
-      res.setEncoding('utf8');
-      let rawData = '';
-      res.on('data', (chunk) => { rawData += chunk; });
-      res.on('end', () => {
-        try {
-          const parsedData = JSON.parse(rawData);
-    	  let embed = new MessageEmbed()
-			.setTitle(parsedData.title)
-			.setColor(0xf4f4ff)
-		        .setDescription(`${parsedData.explanation}`)
-		        .setTimestamp(new Date())
-		        .setURL(parsedData.url)
-		        .setAuthor(`NASA Astronomy Picture Of the Day`)
-		        .setFooter(`Media type: ${parsedData.media_type}`)
-		        .setThumbnail(parsedData.thumbnail_url)
-		        .addField("APOD date", parsedData.date)
-
-   	  if(parsedData.media_type !== "video") {
-		if(parsedData.hasAttribute("hdurl")) {
-			embed.setImage(parsedData.hdurl)
-			     .setURL(parsedData.hdurl)
-		} else{
-			embed.setImage(parsedData.url)
-		}
-	  }
-		        
-	  message.channel.send(embed);
-        } catch (e) {
-          console.error(e.message);
+      if (parsedData.media_type !== "video") {
+        if (parsedData.hasAttribute("hdurl")) {
+          embed.setImage(parsedData.hdurl)
+              .setURL(parsedData.hdurl)
+        } else {
+          embed.setImage(parsedData.url)
         }
-      });
-    }).on('error', (e) => {
-      console.error(`Got error: ${e.message}`);
-    });
-  }
+        message.channel.send(embed);
+      }
+    }, (e) => console.error(e))
+
+
+
+
 
 
 });
