@@ -87,35 +87,15 @@ describe('Test date generation', () => {
 });
 
 // TEST REST CALL
-describe('Test APOD endpoint', () => {
-  it('has date', async () => {
-    let outDate = get_apod_date(["2020-06-04"]);
-    let url = `https://api.nasa.gov/planetary/apod?api_key=${config.nasa_apikey}&thumbs=true&hd=true&date=${outDate}`;
-    const parsedData = await rest_request(url)
-    assert.equal(parsedData.hasOwnProperty("date"), true)
+describe('Test Rest function', () => {
+  it('should have foo1', async () => {
+    let url = 'https://postman-echo.com/get?foo1=bar1';
+    parseData = await rest_request(url)
+    assert.equal(parsedData.hasOwnProperty("foo1"), true)
   });
-  it('has explanation', async () => {
-    let outDate = get_apod_date(["2020-06-04"]);
-    let url = `https://api.nasa.gov/planetary/apod?api_key=${config.nasa_apikey}&thumbs=true&hd=true&date=${outDate}`;
-    const parsedData = await rest_request(url)
-    assert.equal(parsedData.hasOwnProperty("explanation"), true)
-  });
-  it('has url', async () => {
-    let outDate = get_apod_date(["2020-06-04"]);
-    let url = `https://api.nasa.gov/planetary/apod?api_key=${config.nasa_apikey}&thumbs=true&hd=true&date=${outDate}`;
-    const parsedData = await rest_request(url)
-    assert.equal(parsedData.hasOwnProperty("url"), true)
-  });
-  it('has title', async () => {
-    let outDate = get_apod_date(["2020-06-04"]);
-    let url = `https://api.nasa.gov/planetary/apod?api_key=${config.nasa_apikey}&thumbs=true&hd=true&date=${outDate}`;
-    const parsedData = await rest_request(url)
-    assert.equal(parsedData.hasOwnProperty("title"), true)
-  });
-  it('has media_type', async () => {
-    let outDate = get_apod_date(["2020-06-04"]);
-    let url = `https://api.nasa.gov/planetary/apod?api_key=${config.nasa_apikey}&thumbs=true&hd=true&date=${outDate}`;
-    const parsedData = await rest_request(url)
-    assert.equal(parsedData.hasOwnProperty("media_type"), true)
+  it('value of foo1 should be bar1', async () => {
+    let url = 'https://postman-echo.com/get?foo1=bar1';
+    parseData = await rest_request(url)
+    assert.equal(parsedData.foo1, "bar1")
   });
 })
