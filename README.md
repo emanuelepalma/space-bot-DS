@@ -2,6 +2,10 @@
 
 This is a simple Discord bot to monitor stars and satellite.
 
+## Supported commands
+
+`>help` will provide a complete list of commands directly on Discord.
+
 ## Start
 
 To start the bot you will need to generate a bot token from the Discord Developer site, then invite the bot to your server. 
