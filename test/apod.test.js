@@ -87,15 +87,21 @@ describe('Test date generation', () => {
 });
 
 // TEST REST CALL
-describe('Test Rest function', () => {
-  it('should have foo1', async () => {
+describe('[POSTMAN-ECHO] Test Rest function', () => {
+  it('should have args property', async () => {
     let url = 'https://postman-echo.com/get?foo1=bar1';
-    parseData = await rest_request(url)
-    assert.equal(parsedData.hasOwnProperty("foo1"), true)
+    const parsedData = await rest_request(url)
+    assert.equal(parsedData.hasOwnProperty("args"), true)
+  });
+
+  it('args should have foo1 property', async () => {
+    let url = 'https://postman-echo.com/get?foo1=bar1';
+    const parsedData = await rest_request(url)
+    assert.equal(parsedData.args.hasOwnProperty("foo1"), true)
   });
   it('value of foo1 should be bar1', async () => {
     let url = 'https://postman-echo.com/get?foo1=bar1';
-    parseData = await rest_request(url)
-    assert.equal(parsedData.foo1, "bar1")
+    const parsedData = await rest_request(url)
+    assert.equal(parsedData.args.foo1, "bar1")
   });
 })
