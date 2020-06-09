@@ -1,4 +1,3 @@
-const config = require("../config.json");
 const assert = require('assert');
 const {
   format_date,
